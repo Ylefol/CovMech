@@ -1,0 +1,7 @@
+#This is the .gitignore file
+
+#Ignore results from example
+results_folder
+data/gencode.v35.annotation.gtf
+data/Microarray_data
+data

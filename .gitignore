@@ -4,4 +4,4 @@
 results_folder
 data/gencode.v35.annotation.gtf
 data/Microarray_data
-data
+data/GSEA_results.rds

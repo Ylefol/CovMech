@@ -1,0 +1,12 @@
+"","N","FileName","Array","SampleID","Subject","Group","Timepoint","Severe","MechVent","WHO_scale","Death","Age","BMI","Sex","RNA","Viremi","Days","NL.ratio","CRP","Ferritin_clin","IL6","PCT","Ferritin_Roche","TnT","NTproBNP","GDF15","ST2"
+"F002",55,"AHUS_257236337216_S01_GE1_107_Sep09_2_3.txt","257236337216_2_3","F002","F002","Ctrl","T0","C","C",NA,NA,58,"","M","","C",NA,"",NA,NA,"","",NA,NA,NA,"",NA
+"F003",63,"AHUS_257236337217_S01_GE1_107_Sep09_2_3.txt","257236337217_2_3","F003","F003","Ctrl","T0","C","C",NA,NA,53,"","F","","C",NA,"",NA,NA,"","",NA,NA,NA,"",NA
+"F004",71,"AHUS_257236337218_S01_GE1_107_Sep09_2_3.txt","257236337218_2_3","F004","F004","Ctrl","T0","C","C",NA,NA,55,"","F","","C",NA,"",NA,NA,"","",NA,NA,NA,"",NA
+"F005",79,"AHUS_257236337222_S01_GE1_107_Sep09_2_3.txt","257236337222_2_3","F005","F005","Ctrl","T0","C","C",NA,NA,63,"","F","","C",NA,"",NA,NA,"","",NA,NA,NA,"",NA
+"F006",87,"AHUS_257236337223_S01_GE1_107_Sep09_2_3.txt","257236337223_2_3","F006","F006","Ctrl","T0","C","C",NA,NA,64,"","F","","C",NA,"",NA,NA,"","",NA,NA,NA,"",NA
+"F008",95,"AHUS_257236337224_S01_GE1_107_Sep09_2_3.txt","257236337224_2_3","F008","F008","Ctrl","T0","C","C",NA,NA,51,"","M","","C",NA,"",NA,NA,"","",NA,NA,NA,"",NA
+"F009",8,"AHUS_257236337180_S01_GE1_107_Sep09_2_4.txt","257236337180_2_4","F009","F009","Ctrl","T0","C","C",NA,NA,67,"","F","","C",NA,"",NA,NA,"","",NA,NA,NA,"",NA
+"F011",16,"AHUS_257236337178_S01_GE1_107_Sep09_2_4.txt","257236337178_2_4","F011","F011","Ctrl","T0","C","C",NA,NA,62,"","F","","C",NA,"",NA,NA,"","",NA,NA,NA,"",NA
+"F013",24,"AHUS_257236337179_S01_GE1_107_Sep09_2_4.txt","257236337179_2_4","F013","F013","Ctrl","T0","C","C",NA,NA,66,"","M","","C",NA,"",NA,NA,"","",NA,NA,NA,"",NA
+"F014",32,"AHUS_257236337062_S01_GE1_107_Sep09_2_4.txt","257236337062_2_4","F014","F014","Ctrl","T0","C","C",NA,NA,66,"","M","","C",NA,"",NA,NA,"","",NA,NA,NA,"",NA
+"F016",40,"AHUS_257236337063_S01_GE1_107_Sep09_2_4.txt","257236337063_2_4","F016","F016","Ctrl","T0","C","C",NA,NA,52,"","M","","C",NA,"",NA,NA,"","",NA,NA,NA,"",NA

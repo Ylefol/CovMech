@@ -1,19 +1,19 @@
 #Custom figures for CoV-Mech article
-setwd('~/A_Projects/EpiGen/R_Work_Folder/Cov_Mech/')
+# setwd('~/A_Projects/EpiGen/R_Work_Folder/Cov_Mech/')
 #Dotplots for figure 1D/2 – merger of timepoints
-# load('cluster_profiler_results/critical.cov.D1_vs_non_critical.cov.D1/cluster_profiler_objects.RData')
-# load('cluster_profiler_results/all.cov.D1_vs_healthy.controls//cluster_profiler_objects.RData')
-load('cluster_profiler_results/viremia.cov.D1_vs_non_viremia.cov.D1/cluster_profiler_objects.RData')
+# load('results_folder/critical/cluster_profiler_results/severe.cov.T1_vs_moderate.cov.T1/cluster_profiler_objects.RData')
+load('results_folder/critical/cluster_profiler_results/all.cov.T1_vs_healthy.controls///cluster_profiler_objects.RData')
+# load('results_folder/viremia/cluster_profiler_results/viremia.cov.D1_vs_non_viremia.cov.D1/cluster_profiler_objects.RData')
 
 TP1_gse<-gse
-# load('cluster_profiler_results/critical.cov.D3_vs_non_critical.cov.D3//cluster_profiler_objects.RData')
-# load('cluster_profiler_results/all.cov.D3_vs_healthy.controls///cluster_profiler_objects.RData')
-load('cluster_profiler_results/viremia.cov.D3_vs_non_viremia.cov.D1/cluster_profiler_objects.RData')
+# load('results_folder/critical/cluster_profiler_results/severe.cov.T2_vs_moderate.cov.T2/cluster_profiler_objects.RData')
+load('results_folder/critical/cluster_profiler_results/all.cov.T2_vs_healthy.controls////cluster_profiler_objects.RData')
+# load('results_folder/viremia/cluster_profiler_results/viremia.cov.D3_vs_non_viremia.cov.D3/cluster_profiler_objects.RData')
 
 TP2_gse<-gse
-# load('cluster_profiler_results/critical.cov.D8_vs_non_critical.cov.D8//cluster_profiler_objects.RData')
-# load('cluster_profiler_results/all.cov.D8_vs_healthy.controls///cluster_profiler_objects.RData')
-load('cluster_profiler_results/viremia.cov.D8_vs_non_viremia.cov.D1/cluster_profiler_objects.RData')
+# load('results_folder/critical/cluster_profiler_results/severe.cov.T3_vs_moderate.cov.T3//cluster_profiler_objects.RData')
+load('results_folder/critical/cluster_profiler_results/all.cov.T3_vs_healthy.controls////cluster_profiler_objects.RData')
+# load('results_folder/viremia/cluster_profiler_results/viremia.cov.D8_vs_non_viremia.cov.D8/cluster_profiler_objects.RData')
 
 TP3_gse<-gse
 
@@ -36,7 +36,7 @@ custom_GO_selection<-c('neutrophil mediated immunity','neutrophil degranulation'
 TP1_res<-TP1_gse@result[TP1_gse@result$Description %in% custom_GO_selection,c('ID','Description','setSize','enrichmentScore',"p.adjust")]
 TP1_res[['-log10(padj)']]<--log10(TP1_res$p.adjust)
 row.names(TP1_res)=c(1:nrow(TP1_res))
-TP1_res$timepoint<-rep(x = 'TP1',nrow(TP1_res))
+TP1_res$timepoints<-rep(x = 'TP1',nrow(TP1_res))
 
 # gse_neg<-TP2_gse@result$Description[TP2_gse@result$enrichmentScore<0][1:20]
 # gse_pos<-TP2_gse@result$Description[TP2_gse@result$enrichmentScore>0][1:20]
@@ -44,7 +44,7 @@ TP1_res$timepoint<-rep(x = 'TP1',nrow(TP1_res))
 TP2_res<-TP2_gse@result[TP2_gse@result$Description %in% custom_GO_selection,c('ID','Description','setSize','enrichmentScore',"p.adjust")]
 TP2_res[['-log10(padj)']]<--log10(TP2_res$p.adjust)
 row.names(TP2_res)=c(nrow(TP1_res)+1:nrow(TP2_res))
-TP2_res$timepoint<-rep(x = 'TP2',nrow(TP2_res))
+TP2_res$timepoints<-rep(x = 'TP2',nrow(TP2_res))
 
 
 # gse_neg<-TP3_gse@result$Description[TP3_gse@result$enrichmentScore<0][1:20]
@@ -53,7 +53,7 @@ TP2_res$timepoint<-rep(x = 'TP2',nrow(TP2_res))
 TP3_res<-TP3_gse@result[TP3_gse@result$Description %in% custom_GO_selection,c('ID','Description','setSize','enrichmentScore',"p.adjust")]
 TP3_res[['-log10(padj)']]<--log10(TP3_res$p.adjust)
 row.names(TP3_res)=c(nrow(TP2_res)+nrow(TP1_res)+1:nrow(TP3_res))
-TP3_res$timepoint<-rep(x = 'TP3',nrow(TP3_res))
+TP3_res$timepoints<-rep(x = 'TP3',nrow(TP3_res))
 
 full_data<-rbind(TP1_res,TP2_res,TP3_res)
 
@@ -97,14 +97,14 @@ if(is.function(label_format)) {
   label_func <- label_format
 }
 
-full_data$timepoint[full_data$timepoint=='TP1']<-'D1'
-full_data$timepoint[full_data$timepoint=='TP2']<-'D3'
-full_data$timepoint[full_data$timepoint=='TP3']<-'D8'
+# full_data$timepoint[full_data$timepoint=='TP1']<-'D1'
+# full_data$timepoint[full_data$timepoint=='TP2']<-'D3'
+# full_data$timepoint[full_data$timepoint=='TP3']<-'D8'
 
 full_data$Description<-factor(full_data$Description,levels=rev(custom_GO_selection))
 
 #With the full data, gotta make the plot now.
-plt<-ggplot(full_data, aes(x=timepoint, y=Description, size=`-log10(padj)`, color=enrichmentScore)) +
+plt<-ggplot(full_data, aes(x=timepoints, y=Description, size=`-log10(padj)`, color=enrichmentScore)) +
   geom_point() +
   scale_fill_gradientn(colours=rev(c("red","white","blue")),
                        # values=c(1,0.80,0.60,0.40,0.20, 0,-0.20,-0.40,-0.60,-0.80,-1),
@@ -116,7 +116,7 @@ plt<-ggplot(full_data, aes(x=timepoint, y=Description, size=`-log10(padj)`, colo
   #                        limits=c(-1, 0),
   #                        guide='legend') +
   scale_y_discrete(labels = function(x) str_wrap(str_replace_all(x, "foo" , " "), width = 50)) +
-  ylab(NULL) + ggtitle('All-patients vs Healthy-controls') + theme_dose(15) +
+  ylab(NULL) + ggtitle('Critical vs Mopderate') + theme_dose(15) +
   scale_size(range=c(3, 8))
 
 ggsave(file='merged_tp_dotplot.png',plt,width = 10, height = 8,dpi=300)
@@ -216,26 +216,26 @@ PART_heat_map_custom(TS_object)
 
 
 
-#Get the GOs for TS, append into excel file as sheets
-#Only keep relevant information
-library("xlsx")
-file_locations<-'TS_results/gprofiler_results/data_files/'
-excel_file_name<-'TS_GOs.xlsx'
-
-for(item in list.files(file_locations)){
-  name<-strsplit(item,'_data.csv')[[1]]
-  print(name)
-  my_dta<-read.csv(paste0(file_locations,item),row.names = 1)
-  my_dta<-my_dta[,c('term_id','term_name','p_value','term_size','intersection_size')]
-  
-  if(excel_file_name %in% list.files()==F){
-    write.xlsx(my_dta, excel_file_name, sheetName = name, 
-               col.names = T, row.names = T, append = F)
-  }else{
-    write.xlsx(my_dta, excel_file_name, sheetName = name, 
-               col.names = T, row.names = T, append = T)
-  }
-}
+# #Get the GOs for TS, append into excel file as sheets
+# #Only keep relevant information
+# library("xlsx")
+# file_locations<-'TS_results/gprofiler_results/data_files/'
+# excel_file_name<-'TS_GOs.xlsx'
+# 
+# for(item in list.files(file_locations)){
+#   name<-strsplit(item,'_data.csv')[[1]]
+#   print(name)
+#   my_dta<-read.csv(paste0(file_locations,item),row.names = 1)
+#   my_dta<-my_dta[,c('term_id','term_name','p_value','term_size','intersection_size')]
+#   
+#   if(excel_file_name %in% list.files()==F){
+#     write.xlsx(my_dta, excel_file_name, sheetName = name, 
+#                col.names = T, row.names = T, append = F)
+#   }else{
+#     write.xlsx(my_dta, excel_file_name, sheetName = name, 
+#                col.names = T, row.names = T, append = T)
+#   }
+# }
 
 # 
 # 

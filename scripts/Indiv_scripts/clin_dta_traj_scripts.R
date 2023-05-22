@@ -1,6 +1,6 @@
-setwd("~/A_Projects/EpiGen/R_Work_Folder/Cov_Mech/")
+# setwd("~/A_Projects/EpiGen/R_Work_Folder/Cov_Mech/")
 
-clin_dta<-read.csv('data/clinical_data_for_traj.csv',row.name=1)
+clin_dta<-read.csv('data/removed_002_127/clinical_data_for_traj.csv',row.name=1)
 
 
 #Convert to numeric and log transform
@@ -17,9 +17,9 @@ clin_dta$totIg<- as.numeric(clin_dta$totIg)
 clin_dta$totIg<-log10(clin_dta$totIg)
 clin_dta$totIg <- gsub(pattern = '-Inf',replacement = 0,x = clin_dta$totIg)
 
-clin_dta$Neutrophils<- as.numeric(clin_dta$Neutrophils)
-clin_dta$Neutrophils<-log10(clin_dta$Neutrophils)
-clin_dta$Neutrophils <- gsub(pattern = '-Inf',replacement = 0,x = clin_dta$Neutrophils)
+# clin_dta$Neutrophils<- as.numeric(clin_dta$Neutrophils)
+# clin_dta$Neutrophils<-log10(clin_dta$Neutrophils)
+# clin_dta$Neutrophils <- gsub(pattern = '-Inf',replacement = 0,x = clin_dta$Neutrophils)
 
 library(reshape2)
 clin_dta$ID<-unlist(strsplit(clin_dta$ID,'_'))[c(T,F)]#Split and keep uneven (ID, not _TP)
@@ -41,19 +41,19 @@ names(melted_vals)[names(melted_vals) == 'Severe'] <- 'Group'
 
 
 #Convert timepoints to numeric
-melted_vals$Timepoint[melted_vals$Timepoint=='T1']<-0
-melted_vals$Timepoint[melted_vals$Timepoint=='T2']<-48
-melted_vals$Timepoint[melted_vals$Timepoint=='T3']<-168
+melted_vals$Timepoint[melted_vals$Timepoint=='T1']<-1
+melted_vals$Timepoint[melted_vals$Timepoint=='T2']<-2
+melted_vals$Timepoint[melted_vals$Timepoint=='T3']<-3
 
 
-melted_vals$Timepoint<-factor(as.numeric(melted_vals$Timepoint),levels=c(0,48,168))
+melted_vals$Timepoint<-factor(as.numeric(melted_vals$Timepoint),levels=c(1,2,3))
 #Create custom labels
 melted_vals$labels<-paste0(melted_vals$variable,' – ',melted_vals$Group)
 
 #Add number of patients at each timepoint to the labels
 for (label in unique(melted_vals$labels)){
   num_samples<-table(melted_vals$Timepoint[melted_vals$labels==label])
-  new_label<-paste0(label,': Day1 – ',unname(num_samples[1]),' | Day3 – ',unname(num_samples[2]),' | Day8 – ',unname(num_samples[3]))
+  new_label<-paste0(label,': T1 – ',unname(num_samples[1]),' | T2 – ',unname(num_samples[2]),' | T3 – ',unname(num_samples[3]))
   melted_vals$labels[melted_vals$labels==label]<-new_label
 }
 
@@ -100,8 +100,8 @@ for(dta_type in unique(melted_vals$variable)){
       aes(group = labels)
     ) +
     scale_x_discrete(name ="timepoints",
-                     breaks=c('0','48','168'),
-                     labels=c("D1", "D3", "D8"))+
+                     breaks=c('1','2','3'),
+                     labels=c("T1", "T2", "T3"))+
     ylab(y_axis_name)+
     facet_wrap(~labels,ncol = 2)
   

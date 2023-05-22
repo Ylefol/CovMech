@@ -1,5 +1,5 @@
 options(stringsAsFactors = FALSE)
-setwd("~/A_Projects/EpiGen/R_Work_Folder/Cov_Mech/")
+# setwd("~/A_Projects/EpiGen/R_Work_Folder/Cov_Mech/")
 source("R/my_WGCNA_functions.R")
 
 

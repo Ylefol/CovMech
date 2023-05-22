@@ -154,7 +154,7 @@ wrapper_cluster_trajectory<-function(object,cluster_traj_dta,mean_cluster_traj_d
       sub_ts_means$log10_timepoint[sub_ts_means$log10_timepoint=='-Inf']<-0
 
     }
-
+    print(sub_ts_data$group)
     the_plot<-plot_cluster_traj(object,sub_ts_data,sub_ts_means)
     svg(save_name,width=custom_width,height=custom_height)
     print(the_plot)

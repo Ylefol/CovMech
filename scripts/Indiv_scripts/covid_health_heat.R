@@ -1,10 +1,9 @@
-setwd("~/A_Projects/EpiGen/R_Work_Folder/Cov_Mech/")
 # source('code/functions/my_ClusterProfiler_functions.R')
 source('R/DE_PART_results_functions.R')
 
-my_list<-c('all.cov.D1_vs_healthy.controls','all.cov.D3_vs_healthy.controls','all.cov.D8_vs_healthy.controls')
+my_list<-c('all.cov.T1_vs_healthy.controls','all.cov.T2_vs_healthy.controls','all.cov.T3_vs_healthy.controls')
 sig_file<-'DE_significant_1_005.csv'
-path<-'DE_results/'
+path<-'results_folder/compiled_results_11_05_2023/DE_results/'
 
 prep_object<-function(my_list,sig_file,path){
   DEG_list<-list()
@@ -209,27 +208,27 @@ plot_custom_DE_covid_heat <-function(heat_mat,col_split,row_splits,l2fc_col, log
 
 my_objs<-prep_object(my_list,sig_file,path)
 
-bloop<-create_heatmap_matrix_temp(my_objs[[3]],c('Healthy','Covid'),my_objs[[2]],my_objs[[1]])
+bloop<-create_heatmap_matrix_temp(my_objs[[3]],c('Healthy','COVID-19'),my_objs[[2]],my_objs[[1]])
 mat_cols<-colnames(bloop[[1]])
-mat_cols<-gsub(x = mat_cols,pattern = '_all.cov.D1_vs_healthy.controls',replacement = ' Day 1')
-mat_cols<-gsub(x = mat_cols,pattern = '_all.cov.D3_vs_healthy.controls',replacement = ' Day 3')
-mat_cols<-gsub(x = mat_cols,pattern = '_all.cov.D8_vs_healthy.controls',replacement = ' Day 8')
+mat_cols<-gsub(x = mat_cols,pattern = '_all.cov.T1_vs_healthy.controls',replacement = ' T1')
+mat_cols<-gsub(x = mat_cols,pattern = '_all.cov.T2_vs_healthy.controls',replacement = ' T2')
+mat_cols<-gsub(x = mat_cols,pattern = '_all.cov.T3_vs_healthy.controls',replacement = ' T3')
 colnames(bloop[[1]])=mat_cols
 
 
 #Now take care of 2 in the same way
 to_sub<-names(bloop[[2]])
-to_sub<-gsub(x = to_sub,pattern = '_all.cov.D1_vs_healthy.controls',replacement = ' Day 1')
-to_sub<-gsub(x = to_sub,pattern = '_all.cov.D3_vs_healthy.controls',replacement = ' Day 3')
-to_sub<-gsub(x = to_sub,pattern = '_all.cov.D8_vs_healthy.controls',replacement = ' Day 8')
+to_sub<-gsub(x = to_sub,pattern = '_all.cov.T1_vs_healthy.controls',replacement = ' T1')
+to_sub<-gsub(x = to_sub,pattern = '_all.cov.T2_vs_healthy.controls',replacement = ' T2')
+to_sub<-gsub(x = to_sub,pattern = '_all.cov.T3_vs_healthy.controls',replacement = ' T3')
 names(bloop[[2]])=to_sub
 
 
 #Now number 4
 to_sub<-bloop[[4]]
-to_sub[to_sub=='all.cov.D1_vs_healthy.controls (1948)']<-'Day 1 (1948)'
-to_sub[to_sub=='all.cov.D3_vs_healthy.controls (1621)']<-'Day 3 (1621)'
-to_sub[to_sub=='all.cov.D8_vs_healthy.controls (1044)']<-'Day 8 (1044)'
+to_sub[to_sub=='all.cov.T1_vs_healthy.controls (1952)']<-'Timepoint 1 (1952)'
+to_sub[to_sub=='all.cov.T2_vs_healthy.controls (1731)']<-'Timepoint 2 (1731)'
+to_sub[to_sub=='all.cov.T3_vs_healthy.controls (1033)']<-'Timepoint 3 (1033)'
 bloop[[4]]<-to_sub
 
 log_transform=T
@@ -250,7 +249,7 @@ sample_order<-plot_custom_DE_covid_heat(my_heat_mat,my_region_split,my_group_spl
 
 row_order<-row.names(my_heat_mat)[c(sample_order$Covid,sample_order$Healthy)]
 
-samp_dta<-read.csv('data/TS_covid/sample_file_no_healthy_rem_patients.csv')
+samp_dta<-read.csv('data/removed_002_127/TS_covid/sample_file_no_healthy_rem_patients.csv')
 samp_dta$sample<-unlist(strsplit(samp_dta$sample,'_'))[c(T,F)]
 samp_dta<-unique(samp_dta[,c('sample','group')])
 

@@ -6,14 +6,14 @@ library('WGCNA')
 library(org.Hs.eg.db)
 
 options(stringsAsFactors = FALSE)
-setwd("~/A_Projects/EpiGen/R_Work_Folder/Cov_Mech//")
+# setwd("~/A_Projects/EpiGen/R_Work_Folder/Cov_Mech//")
 source("R/my_WGCNA_functions.R")
 
 dir.create("WGCNA_results")
 
 #Load data
-datExpr0<-read.csv('data/WGCNA_dta/WGCNA_datExpr0.csv',row.names = 1)
-datTraits<-read.csv('data/WGCNA_dta/WGCNA_datTraits.csv',row.names = 1)
+datExpr0<-read.csv('data/removed_002_127/WGCNA_dta/WGCNA_datExpr0.csv',row.names = 1)
+datTraits<-read.csv('data/removed_002_127/WGCNA_dta/WGCNA_datTraits.csv',row.names = 1)
 
 #Do this so that the row order matches between them
 datExpr0 <- datExpr0[sort(rownames(datExpr0)),]
@@ -49,17 +49,18 @@ print(plotDendroAndColors(sampleTree2, traitColors,
                           main = "Sample dendrogram and trait heatmap"))
 dev.off()
 
-# source("code/functions/my_WGCNA_functions.R")
-svg(paste0("WGCNA_results/clinical_values_heatmap.svg"),15,10)
-print(plot_clinical_heatmap(datTraits,traitColors,'Critical'))
-dev.off()
-
-
 #Save the power plots for subsequent user analysis
 png(paste0("WGCNA_results/power_plot.png"),width=750,height=750)
 print(plot_power(datExpr))
-
 dev.off()
+
+# source("code/functions/my_WGCNA_functions.R")
+svg(paste0("WGCNA_results/clinical_values_heatmap.svg"),15,10)
+print(plot_clinical_heatmap(datTraits,traitColors,'Severe'))
+dev.off()
+
+
+
 
 library(corrplot)
 # setwd("~/A_Projects/EpiGen/R_Work_Folder/RNAseq_pipeline/")

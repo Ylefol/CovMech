@@ -1,4 +1,4 @@
-setwd('~/A_Projects/EpiGen/R_Work_Folder/Cov_Mech/')
+setwd('A_Projects/EpiGen/R_Work_Folder/CovMech/')
 source('R/my_WGCNA_functions.R')
 
 load('WGCNA_results/WGCNA_part2.RData')
@@ -94,7 +94,7 @@ dotplot_YL_custom <- function(object, x = "geneRatio", color = "p.adjust",
 
 source('R/my_ClusterProfiler_functions.R')
 
-path<-'cluster_profiler_results/'
+path<-'results_folder/critical/cluster_profiler_results/'
 list.files(path)
 
 for(exp in list.files(path)){

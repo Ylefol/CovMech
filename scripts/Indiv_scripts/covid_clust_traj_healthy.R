@@ -1,18 +1,18 @@
-setwd('~/A_Projects/EpiGen/R_Work_Folder/Cov_Mech/')
+# setwd('A_Projects/EpiGen/R_Work_Folder/CovMech/')
 
-load('TS_results/timeseries_obj_res.Rdata')
+load('results_folder/critical/TS_results/timeseries_obj_res.Rdata')
 
 source('R/object.R')
 source('R/DE_PART_results_functions.R')
 source('R/MDS_GO_results_functions.R')
 
 
-Elist<-readRDS('data/TS_covid/processed_adjusted_cov_dta.rds')
+Elist<-readRDS('data/removed_002_127/TS_covid/processed_adjusted_cov_dta.rds')
 row.names(Elist$E)=Elist$genes$GeneName
 Elist<-Elist$E
 healthy_patients<-colnames(Elist)[startsWith(colnames(Elist),'F')]
 
-TS_object@sample_data<-read.csv('data/TS_covid/sample_file_adjusted_w_healthy.csv')
+TS_object@sample_data<-read.csv('data/removed_002_127/TS_covid/sample_file_adjusted_w_healthy_rem_patients.csv')
 TS_object@count_matrix$norm<-Elist[,TS_object@sample_data$sample]
 
 custom_colors<-c(unname(TS_object@group_colors),'#43db0e')
@@ -94,40 +94,44 @@ create_traj_data_healthy_permutations<-function(object,custom_cmap=NULL,scale_fe
 
 # 
 # #Build custom WGCNA cmap
-# WGCNA_path<-'WGCNA_results/WGCNA_module_gene_lists/'
-# my_cmap<-data.frame()
-# for(file in list.files(WGCNA_path)){
-#   module_name<-strsplit(file,'.csv')[[1]]
-#   temp_module<-read.csv(paste0(WGCNA_path,file))
-#   temp_module$cluster_col<-temp_module$moduleColor
-#   row.names(temp_module)=temp_module$geneSymbol
-#   temp_module<-temp_module[,c('moduleColor','cluster_col')]
-#   colnames(temp_module)=c('cluster','cluster_col')
-# 
-#   if(nrow(my_cmap)==0){
-#     my_cmap<-temp_module
-#   }else{
-#     my_cmap<-rbind(my_cmap,temp_module)
-#   }
-# }
-# # Filter for genes which are in the normalized matrix
-# my_cmap<-my_cmap[row.names(my_cmap) %in% row.names(TS_object@count_matrix$norm),]
+WGCNA_path<-'results_folder/compiled_results_16_05_2023/WGCNA_results/WGCNA_module_gene_lists/'
+my_cmap<-data.frame()
+for(file in list.files(WGCNA_path)){
+  module_name<-strsplit(file,'.csv')[[1]]
+  temp_module<-read.csv(paste0(WGCNA_path,file))
+  temp_module$cluster_col<-temp_module$moduleColor
+  row.names(temp_module)=temp_module$geneSymbol
+  temp_module<-temp_module[,c('moduleColor','cluster_col')]
+  colnames(temp_module)=c('cluster','cluster_col')
+
+  if(nrow(my_cmap)==0){
+    my_cmap<-temp_module
+  }else{
+    my_cmap<-rbind(my_cmap,temp_module)
+  }
+}
+# Filter for genes which are in the normalized matrix
+my_cmap<-my_cmap[row.names(my_cmap) %in% row.names(TS_object@count_matrix$norm),]
 # Filter cmap for desired modules
 # my_cmap<-my_cmap[my_cmap$cluster %in% c('yellow','green','black','magenta','greenyellow','midnightblue'),]
 
 #If need to use WGCNA, input custom cmap instead of NULL
 ts_data_healthy<-create_traj_data_healthy_permutations(TS_object,custom_cmap = NULL,scale_feat=T)
-ts_data_healthy$group[ts_data_healthy$group=='Severe']<-'Critical'
-ts_data_healthy$group[ts_data_healthy$group=='Mild']<-'Non-critical'
+ts_data_healthy$group[ts_data_healthy$group=='Severe']<-'Severe'
+ts_data_healthy$group[ts_data_healthy$group=='Moderate']<-'Moderate'
 
-ts_data_healthy$labels<-gsub(x = ts_data_healthy$labels,pattern = 'Severe',replacement = 'Critical')
-ts_data_healthy$labels<-gsub(x = ts_data_healthy$labels,pattern = 'Mild',replacement = 'Non-critical')
+ts_data_healthy$labels<-gsub(x = ts_data_healthy$labels,pattern = 'Severe',replacement = 'Severe')
+ts_data_healthy$labels<-gsub(x = ts_data_healthy$labels,pattern = 'Moderate',replacement = 'Moderate')
 
-ts_data_healthy$timepoint[ts_data_healthy$timepoint==120]<-168
+ts_data_healthy$timepoint[ts_data_healthy$timepoint==0]<-1
+ts_data_healthy$timepoint[ts_data_healthy$timepoint==48]<-2
+ts_data_healthy$timepoint[ts_data_healthy$timepoint==120]<-3
+
 
 
 ts_data<-ts_data_healthy
 mean_ts_data<-calculate_mean_cluster_traj(ts_data) #Calculate the mean scaled values for each cluster
+
 
 clust_order<-unique(ts_data[,c('cluster','nGenes')])
 clust_order<-clust_order$cluster[order(-clust_order$nGenes)]
@@ -211,6 +215,18 @@ for (idx in 1:num_needed_figures){
   no_h_dta<-sub_ts_data[sub_ts_data$group != 'Healthy',]
   no_h_mean<-sub_ts_means[sub_ts_means$group != 'Healthy',]
   
+  
+  # c_interest<-c('midnightblue','magenta','red','green','brown','salmon')
+  c_interest<-c('C2','C3','C4','C6')
+  #Order data per cluster/module
+  interest<-no_h_dta[no_h_dta$cluster %in% c_interest,]
+  others<-no_h_dta[!no_h_dta$cluster %in% c_interest,]
+  no_h_dta<-rbind(interest,others)
+  
+  interest<-no_h_mean[no_h_mean$cluster %in% c_interest,]
+  others<-no_h_mean[!no_h_mean$cluster %in% c_interest,]
+  no_h_mean<-rbind(interest,others)
+  
   healthy_means<-data.frame()
   for(label in unique(no_h_mean$labels)){
     clust=unique(no_h_mean$cluster[no_h_mean$labels==label])
@@ -224,13 +240,23 @@ for (idx in 1:num_needed_figures){
     }
   }
   
+  
+  
+  #Order of labels
+  #Get expected order
+  expect_order<-as.vector(unique(no_h_dta$labels))
+  new_order<-c()
+  for(i in 1:length(expect_order[c(T,F)])){
+    new_order<-c(new_order,expect_order[c(F,T)][i])
+    new_order<-c(new_order,expect_order[c(T,F)][i])
+  }
+  
   no_h_dta$cluster<-factor(no_h_dta$cluster,levels=unique(no_h_dta$cluster))
-  no_h_dta$labels<-factor(no_h_dta$labels,levels=unique(no_h_dta$labels))
+  no_h_dta$labels<-factor(no_h_dta$labels,levels=new_order)
   no_h_mean$labels<-factor(no_h_mean$labels,levels=unique(no_h_mean$labels))
-  healthy_means$labels<-factor(healthy_means$labels,levels=unique(healthy_means$labels))
+  healthy_means$labels<-factor(healthy_means$labels,levels=new_order)
   
-  colnames(no_h_dta)
-  
+
   plt <- ggplot(no_h_dta, aes(y = trans_mean , x = timepoint, color = group))
   plt <- plt +
     geom_line(aes(group = gene_id), alpha = 0.4) +
@@ -244,13 +270,13 @@ for (idx in 1:num_needed_figures){
       aes(group = group)
     ) +
     scale_colour_manual(name = 'Groups', 
-                        values =c('Critical'="#e31a1c",
-                                  'Non.critical'="#1f78b4",
-                                  'Healthy'='#369515'), labels = c('Critical','Non.critical','Healthy'))+
+                        values =c('Severe'="#e31a1c",
+                                  'Moderate'="#1f78b4",
+                                  'Healthy'='#369515'), labels = c('Severe','Moderate','Healthy'))+
     # scale_x_continuous(expand = c(0, 0)) + 
     scale_x_continuous(name ="timepoints",
-                    breaks=c(0,48,168),
-                    labels=c("D1", "D3", "D8"))+
+                    breaks=c(1,2,3),
+                    labels=c("T1", "T2", "T3"))+
     # scale_x_discrete(breaks=c('0','48','168'),
     #                    labels=c("Day 1", "Day 3", "Day 8"))+
     ylab("Scaled expression") +

@@ -1,0 +1,90 @@
+setwd('~/A_Projects/EpiGen/R_Work_Folder/CovMech/')
+source('R/clusterGenomics.R')
+source('R/MDS_GO_results_functions.R')
+source('R/object.R')
+source('R/PART.R')
+source('R/DE_PART_results_functions.R')
+#Organism param for semantic data
+# library("org.Hs.eg.db")
+# my_org_sem_sim='org.Hs.eg.db'
+
+library("org.Hs.eg.db")
+my_org_sem_sim='org.Hs.eg.db'
+
+log_tp_traj=F
+
+targeted_cluster='C4'
+
+target_dir='/home/yohanl/A_Projects/EpiGen/R_Work_Folder/CovMech/results_folder/critical/TS_results/'
+
+dir.create(paste0(target_dir,'/sub_cluster_analysis'))
+sub_analysis_name=paste0(target_dir,'/sub_cluster_analysis/',targeted_cluster,'/')
+dir.create(sub_analysis_name)
+
+load(file = paste0(target_dir,'/timeseries_obj_res.Rdata'))
+
+#Create the sub matrix
+genes_of_cluster<-row.names(TS_object@PART_results$cluster_map)[TS_object@PART_results$cluster_map$cluster==targeted_cluster]
+sub_matrix<-TS_object@PART_results$part_matrix[genes_of_cluster,]
+
+#Re-do part for the sub matrix and replace necessary elements of the object
+sub_TS_object<-compute_PART(TS_object,part_recursion=100,part_min_clust = 10,
+                        dist_param="euclidean", hclust_param="average",
+                        custom_seed=123456,custom_matrix=sub_matrix)
+
+sub_TS_object@PART_results$part_matrix<-sub_matrix
+sub_TS_object@Gprofiler_results<-list()
+sub_TS_object<-run_gprofiler_PART_clusters(sub_TS_object)
+
+save(sub_TS_object,file=paste0(sub_analysis_name,'/timeseries_obj_res.Rdata'))
+
+load(file=paste0(sub_analysis_name,'/timeseries_obj_res.Rdata'))
+#Create PART analysis related plots in a new sub-directory based on the above
+#parameters
+PART_heat_map(sub_TS_object,paste0(sub_analysis_name,'PART_heat'))
+
+my_ts_data<-calculate_cluster_traj_data(sub_TS_object,scale_feat=T)
+my_ts_data$group<-factor(my_ts_data$group,levels=c('Moderate','Severe'))
+my_mean_ts_data<-calculate_mean_cluster_traj(my_ts_data)
+my_mean_ts_data$group<-factor(my_mean_ts_data$group,levels=c('Moderate','Severe'))
+
+wrapper_cluster_trajectory(sub_TS_object,my_ts_data,my_mean_ts_data,log_TP=log_tp_traj,plot_name=paste0(sub_analysis_name,'Ctraj'))
+
+#Params
+my_ont_gpro='GO:BP'
+clusts_int<-unique(sub_TS_object@PART_results$cluster_map$cluster)
+GO_clusters<-gprofiler_cluster_analysis(sub_TS_object,my_ont_gpro,save_path = sub_analysis_name)
+GO_clusters<-GO_clusters$GO_df
+#Filter for modules of interest
+GO_clusters<-GO_clusters[GO_clusters$group_name %in% clusts_int,]
+
+#Create semantic data
+my_ont_sem_sim='BP'
+sem_data <- godata(my_org_sem_sim, ont=my_ont_sem_sim, computeIC=TRUE)
+
+#Plot and save MDS and clustered MDS
+wrapper_MDS_and_MDS_clusters(GO_clusters,sem_data,my_ont_sem_sim,target_dir=paste0(sub_analysis_name,'gprofiler_results/'))
+
+#Create a dotplot summarizing the top n findings for each cluster
+target_top=10
+target_ontology<-'GO:BP'
+GO_dotplot_wrapper(sub_analysis_name,target_ontology,target_top)
+
+target_ontology<-'REAC'
+GO_dotplot_wrapper(sub_analysis_name,target_ontology,target_top)
+
+target_ontology<-'KEGG'
+GO_dotplot_wrapper(sub_analysis_name,target_ontology,target_top)
+
+#Dotplot for terms relating to specific ancestors
+#All GOs relating to immune system process
+target_ancestors<-c('GO:0002253','GO:0019882','GO:0002404','GO:0002339','GO:0042386',
+                    'GO:0035172','GO:0002252','GO:0006955','GO:0002520','GO:0090713',
+                    'GO:0045321','GO:0001776','GO:0050900','GO:0031294','GO:0002262',
+                    'GO:0002683','GO:0002684','GO:0002440','GO:0002682','GO:0002200',
+                    'GO:0045058','GO:0002507')
+#sensory perception of small and G protein coupled receptor signalling pathway
+# target_ancestors<-c('GO:0007608','GO:0007186')
+
+GOs_ancestors_clust<-find_relation_to_ancestors(target_ancestors,GO_clusters,ontology = 'BP')
+wrapper_ancestor_curation_plots(GOs_ancestors_clust,sem_data,target_dir=sub_analysis_name)

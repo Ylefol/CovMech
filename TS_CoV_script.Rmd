@@ -33,16 +33,16 @@ name_result_folder<-'TS_results/'
 obj_name<-'timeseries_obj_res.Rdata'
 
 #Path to count data and sample data respectively
-my_path_data<-'data/TS_covid/processed_adjusted_cov_dta.rds'
-my_path_sample_dta<-'data/TS_covid/sample_file_viremia_no_healthy_rem_patients.csv'
+my_path_data<-'data/removed_002_127/TS_covid/processed_adjusted_cov_dta.rds'
+my_path_sample_dta<-'data/removed_002_127/TS_covid/sample_file_no_healthy_rem_patients.csv'
 
 #Set-up time series object parameters
 diff_exp_type<-'limma' #package used for DE – can also be 'limma'
 p_val_filter_type<-'pvalue' #Either padj or pvalue, used to filter for significance
 p_thresh<-0.05 #pvalue or padj value threshold for significance
 l2fc_thresh<-1 #log(2)foldChange threshold for significance
-name_control<-'Non.viremia' #Name of experiment as seen in the sample file
-name_experiment<-'Viremia' #Name of control as seen in the sample file
+name_control<-'Moderate' #Name of experiment as seen in the sample file
+name_experiment<-'Severe' #Name of control as seen in the sample file
 graphic_vector<-c("#e31a1c","#1f78b4") #Pre-set colors for the groups
 org_sem_sim='org.Hs.eg.db'
 
@@ -175,7 +175,7 @@ in the top right of each respective interactive plot
 
 ```{r results_setup ,echo=FALSE,message=FALSE,warning=FALSE}
 #Set the working directory
-setwd("~/A_Projects/EpiGen/R_Work_Folder/Cov_Mech/")
+# setwd("~/A_Projects/EpiGen/R_Work_Folder/Cov_Mech/")
 
 #Load class and function to naviguate the TimeSeries object
 source('R/object.R')
